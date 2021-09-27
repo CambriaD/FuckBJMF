@@ -90,7 +90,7 @@ public class Main {
             if (result.contains("成功")) {
                 log.info("{} punch success" , file.getName());
             } else if (result.contains("已签到")){
-                //无事发生
+                log.info("{} punch success" , file.getName());
             } else {
                 log.warn("{} punch Failed" , file.getName());
                 log.error(result);
