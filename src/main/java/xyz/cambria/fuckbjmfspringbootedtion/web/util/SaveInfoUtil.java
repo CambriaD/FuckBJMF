@@ -2,6 +2,7 @@ package xyz.cambria.fuckbjmfspringbootedtion.web.util;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.Header;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -50,6 +51,12 @@ public class SaveInfoUtil implements Serializable {
         CloseableHttpResponse response = client.execute(login);
         String loginCookie = response.getFirstHeader("Set-Cookie").toString().substring(11).trim();
 
+        /*Header[] headers = response.getHeaders("Set-Cookie");
+        StringBuilder loginCookieBuilder = new StringBuilder();
+        for (Header header : headers) {
+            loginCookieBuilder.append(header.toString().substring(11).trim().split(";")[0]).append(";");
+        }*/
+        
         String filePayload = new StringBuilder().append("cookie=").append(loginCookie).toString();
 
         File file = new File(PATH + fileName + ".properties");

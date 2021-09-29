@@ -3,6 +3,7 @@ package xyz.cambria.fuckbjmfspringbootedtion.bjmf;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
@@ -35,7 +36,7 @@ public class UpdateCookie {
         File[] files = new File(FILE_PATH).listFiles();
 //        System.out.println(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date()));
 //        System.out.println(FILE_PATH + " Found Files:");
-        log.info("Run at {}" , new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date()));
+        log.info("Updating cookies at {}" , new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date()));
         log.info("Found Files:");
 
         if (files == null)
@@ -50,17 +51,24 @@ public class UpdateCookie {
             properties.load(new FileReader(file));
 
             String cookie = properties.getProperty("cookie");
-            List<BasicNameValuePair> payload = new ArrayList<>();
-
             CloseableHttpClient client = HttpClients.createDefault();
-            HttpGet get = new HttpGet("http://banjimofang.com/student");
-            get.setHeader("Cookie" , cookie);
-            CloseableHttpResponse response = client.execute(get);
+            String url = "http://banjimofang.com/student/course/" + GetClassId.getClassId(cookie) + "/punchs";
+            HttpPost post = new HttpPost(url);
+            post.setHeader("cookie" , cookie);
+            CloseableHttpResponse response = client.execute(post);
             String updateCookie = response.getFirstHeader("Set-Cookie").toString().substring(11).trim();
 
             try {
+                log.debug("Class ID:{}" , GetClassId.getClassId(updateCookie));
+                Integer.parseInt(GetClassId.getClassId(updateCookie));
+            } catch (Exception e) {
+                log.error("User {} Error:" , file.getName());
+                e.printStackTrace();
+            }
+
+            try {
                 FileWriter writer = new FileWriter(file);
-                writer.write(updateCookie);
+                writer.write("cookie=" + updateCookie);
                 writer.flush();
                 writer.close();
             } catch (Exception e) {
@@ -69,6 +77,7 @@ public class UpdateCookie {
             }
 
             log.info("File {} update success" , file.getName());
+            log.debug("Current cookie:{}" , updateCookie);
         }
     }
 

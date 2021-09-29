@@ -44,7 +44,7 @@ public class Main {
         File[] files = new File(FILE_PATH).listFiles();
 //        System.out.println(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date()));
 //        System.out.println(FILE_PATH + " Found Files:");
-        log.info("Run at {}" , new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date()));
+        log.info("Punching at {}" , new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date()));
         log.info("Found Files:");
 
         if (files == null)
@@ -75,7 +75,15 @@ public class Main {
                 payload.add(new BasicNameValuePair("gps_addr" , gps_addr));
                 payload.add(new BasicNameValuePair("res" , res));
 
-                String url = new StringBuilder().append("http://banjimofang.com/student/course/").append(GetClassId.getClassId(cookie)).append("/punchs").toString();
+            try {
+                Integer.parseInt(GetClassId.getClassId(cookie));
+            } catch (NumberFormatException e) {
+                log.error("{} punch Failed: Get ClassID Failed" , file.getName());
+
+                continue;
+            }
+
+            String url = new StringBuilder().append("http://banjimofang.com/student/course/").append(GetClassId.getClassId(cookie)).append("/punchs").toString();
                 HttpPost post = new HttpPost(url);
 
                 CloseableHttpClient client = HttpClients.createDefault();
@@ -86,6 +94,8 @@ public class Main {
                 CloseableHttpResponse response = client.execute(post);
 
             String result = EntityUtils.toString(response.getEntity());
+
+            log.debug("Current cookie:{}" , cookie);
 
             if (result.contains("成功")) {
                 log.info("{} punch success" , file.getName());

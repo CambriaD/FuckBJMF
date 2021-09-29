@@ -11,7 +11,7 @@ import java.io.IOException;
 public class PunchSchedule {
 
 //    @Scheduled(cron = "0/10 * * * * 1-7")
-    @Scheduled(cron = "0 0/15 22 * * 1-7")
+    @Scheduled(cron = "0 0,15,30,44 22 * * 1-7")
     private void punch() throws IOException {
         xyz.cambria.fuckbjmfspringbootedtion.bjmf.Main.main(null);
     }

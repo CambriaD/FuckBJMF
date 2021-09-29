@@ -16,7 +16,8 @@ public class GetPunchId {
 
     static String getPunchId(String cookie) throws IOException {
         CloseableHttpClient client = HttpClients.createDefault();
-        HttpPost post = new HttpPost("http://banjimofang.com/student/course/44987/punchs");
+        String url = new StringBuilder().append("http://banjimofang.com/student/course/").append(GetClassId.getClassId(cookie)).append("/punchs").toString();
+        HttpPost post = new HttpPost(url);
         post.setHeader("cookie" , cookie);
         CloseableHttpResponse response = client.execute(post);
 
