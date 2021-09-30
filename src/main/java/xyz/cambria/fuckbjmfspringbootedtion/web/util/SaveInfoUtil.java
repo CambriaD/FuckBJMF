@@ -1,6 +1,5 @@
 package xyz.cambria.fuckbjmfspringbootedtion.web.util;
 
-import com.sun.net.httpserver.HttpsConfigurator;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.Header;
@@ -12,9 +11,9 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.springframework.stereotype.Component;
+import xyz.cambria.common.FilePathUtil;
 
 import java.io.*;
-import java.util.Properties;
 
 @Component
 @Data
@@ -22,22 +21,9 @@ import java.util.Properties;
 public class SaveInfoUtil implements Serializable {
 
     private String PATH;
-    private static Properties properties;
-
-    static {
-        properties = new Properties();
-        try {
-            properties.load(new FileInputStream("config.properties"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-//        System.out.println(properties.getProperty("stuInfoSavePath"));
-        log.info("Students Info Save Path:{}" , properties.getProperty("stuInfoSavePath"));
-    }
 
     public int saveInfo(String resp , String cookie , String fileName) throws IOException {
-        PATH = properties.getProperty("stuInfoSavePath");
+        PATH = FilePathUtil.getBJMFPath();
 
         if (fileName.isEmpty()) {
             return 2;
@@ -60,9 +46,6 @@ public class SaveInfoUtil implements Serializable {
         login.setHeader("DNT" , "1");
         CloseableHttpResponse response = client.execute(login);
 //        String loginCookie = response.getFirstHeader("Set-Cookie").toString().substring(11).trim();
-
-        Header[] allHeaders = response.getAllHeaders();
-
 
         Header[] headers = response.getHeaders("Set-Cookie");
         StringBuilder loginCookieBuilder = new StringBuilder();
