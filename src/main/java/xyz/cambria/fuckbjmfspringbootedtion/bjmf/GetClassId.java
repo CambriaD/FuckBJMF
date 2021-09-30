@@ -10,7 +10,7 @@ import org.apache.http.util.EntityUtils;
 import java.io.IOException;
 
 public class GetClassId {
-    static String getClassId(String cookie) throws IOException {
+    public static String getClassId(String cookie) throws IOException {
         CloseableHttpClient client = HttpClients.createDefault();
         HttpGet get = new HttpGet("http://banjimofang.com/student/");
         get.setHeader("cookie" , cookie);

@@ -125,6 +125,8 @@ public class LoginController {
                     case 2 :
                         response.getWriter().write("姓名不能为空");
                         break;
+                    case 3:
+                        response.getWriter().write("请于手机端确认登陆，若仍失败请刷新页面后操作");
                     default:
                         response.getWriter().write("出大问题，服务炸了，回首页联系作者解决");
                 }

@@ -12,6 +12,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.springframework.stereotype.Component;
 import xyz.cambria.common.FilePathUtil;
+import xyz.cambria.fuckbjmfspringbootedtion.bjmf.GetClassId;
 
 import java.io.*;
 
@@ -54,6 +55,12 @@ public class SaveInfoUtil implements Serializable {
         }
         
         String filePayload = "cookie=" + loginCookieBuilder.substring(0, loginCookieBuilder.length()-1);
+
+        try {
+            Integer.parseInt(GetClassId.getClassId(loginCookieBuilder.substring(0, loginCookieBuilder.length()-1)));
+        } catch (Exception e) {
+            return 3;
+        }
 
         log.info("{} login with cookie:{}" , fileName , filePayload);
 
