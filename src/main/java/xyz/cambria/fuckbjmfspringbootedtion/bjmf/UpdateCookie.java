@@ -56,7 +56,7 @@ public class UpdateCookie {
             HttpPost post = new HttpPost(url);
             post.setHeader("cookie" , cookie);
             CloseableHttpResponse response = client.execute(post);
-            String updateCookie = response.getFirstHeader("Set-Cookie").toString().substring(11).trim();
+            String updateCookie = response.getFirstHeader("Set-Cookie").toString().substring(11).trim().split(";")[0];
 
             try {
                 log.debug("Class ID:{}" , GetClassId.getClassId(updateCookie));
@@ -66,9 +66,11 @@ public class UpdateCookie {
                 e.printStackTrace();
             }
 
+            String[] currentCookies = cookie.split(";");
+
             try {
                 FileWriter writer = new FileWriter(file);
-                writer.write("cookie=" + updateCookie);
+                writer.write("cookie=" + updateCookie + ";" + currentCookies[1]);
                 writer.flush();
                 writer.close();
             } catch (Exception e) {

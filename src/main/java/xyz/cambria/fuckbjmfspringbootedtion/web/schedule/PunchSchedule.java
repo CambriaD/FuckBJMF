@@ -16,7 +16,13 @@ public class PunchSchedule {
         xyz.cambria.fuckbjmfspringbootedtion.bjmf.Main.main(null);
     }
 
-    @Scheduled(cron = "0 0 * * * 1-7")
+    @Scheduled(cron = "0 50 21 * * 1-7")
+    private void punch2() throws IOException {
+        xyz.cambria.fuckbjmfspringbootedtion.bjmf.Main.main(null);
+    }
+
+
+        @Scheduled(cron = "0 0 * * * 1-7")
     private void updateCookie() throws IOException {
         xyz.cambria.fuckbjmfspringbootedtion.bjmf.UpdateCookie.updateCookie();
     }
