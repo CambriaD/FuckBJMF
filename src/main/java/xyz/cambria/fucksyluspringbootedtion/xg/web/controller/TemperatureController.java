@@ -1,10 +1,10 @@
-package xyz.cambria.fucksyluspringbootedtion.xg.controller;
+package xyz.cambria.fucksyluspringbootedtion.xg.web.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
-import xyz.cambria.fucksyluspringbootedtion.xg.util.SaveStuInfo;
+import xyz.cambria.fucksyluspringbootedtion.xg.web.util.SaveStuInfo;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;

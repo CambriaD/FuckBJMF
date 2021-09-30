@@ -1,4 +1,4 @@
-package xyz.cambria.fucksyluspringbootedtion.xg.util;
+package xyz.cambria.fucksyluspringbootedtion.xg.web.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
