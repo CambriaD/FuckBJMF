@@ -120,11 +120,13 @@ public class LoginController {
                 response.setCharacterEncoding("GBK");
                 switch (rtn) {
                     case 1 :
-                        response.getWriter().write("登录成功，每分钟将执行一次签到，结果请一分钟后查看");
+                        response.getWriter().write("登录成功，21:45-22:45每15分钟执行一次签到，结果请15分钟后查看");
                         break;
                     case 2 :
                         response.getWriter().write("姓名不能为空");
                         break;
+                    case 3:
+                        response.getWriter().write("请于手机端确认登陆，若仍失败请刷新页面后操作");
                     default:
                         response.getWriter().write("出大问题，服务炸了，回首页联系作者解决");
                 }

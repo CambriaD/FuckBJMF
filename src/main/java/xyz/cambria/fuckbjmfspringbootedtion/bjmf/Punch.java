@@ -8,6 +8,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import xyz.cambria.common.FilePathUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,20 +25,10 @@ import java.util.Properties;
  * @creat 2021/9/22 7:55
  */
 @Slf4j
-public class Main {
+public class Punch {
 
-    private static Properties properties;
-    static {
-        try {
-            properties = new Properties();
-            properties.load(new FileInputStream("config.properties"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void main(String[] args) throws IOException {
-        String FILE_PATH = properties.getProperty("stuInfoSavePath");
+    public static void punch() throws IOException {
+        String FILE_PATH = FilePathUtil.getBJMFPath();
 
         /*Login.login("15804201356" , "");*/
 

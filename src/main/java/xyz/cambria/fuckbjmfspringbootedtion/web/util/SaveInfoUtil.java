@@ -3,16 +3,18 @@ package xyz.cambria.fuckbjmfspringbootedtion.web.util;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.Header;
+import org.apache.http.HttpHeaders;
+import org.apache.http.HttpVersion;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
+import xyz.cambria.common.FilePathUtil;
+import xyz.cambria.fuckbjmfspringbootedtion.bjmf.GetClassId;
 
 import java.io.*;
-import java.util.Properties;
 
 @Component
 @Data
@@ -20,22 +22,9 @@ import java.util.Properties;
 public class SaveInfoUtil implements Serializable {
 
     private String PATH;
-    private static Properties properties;
-
-    static {
-        properties = new Properties();
-        try {
-            properties.load(new FileInputStream("config.properties"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-//        System.out.println(properties.getProperty("stuInfoSavePath"));
-        log.info("Students Info Save Path:{}" , properties.getProperty("stuInfoSavePath"));
-    }
 
     public int saveInfo(String resp , String cookie , String fileName) throws IOException {
-        PATH = properties.getProperty("stuInfoSavePath");
+        PATH = FilePathUtil.getBJMFPath();
 
         if (fileName.isEmpty()) {
             return 2;
@@ -45,19 +34,35 @@ public class SaveInfoUtil implements Serializable {
         temp = temp.substring(0 , temp.length()-2);
         String loginUrl = "http://banjimofang.com/student/" + temp;
 
-        CloseableHttpClient client = HttpClients.createDefault();
+//        CloseableHttpClient client = HttpClients.createDefault();
+        CloseableHttpClient client = HttpClients.custom().setDefaultRequestConfig(RequestConfig.custom().setRedirectsEnabled(false).build()).build();
         HttpGet login = new HttpGet(loginUrl);
+        login.setProtocolVersion(HttpVersion.HTTP_1_1);
+        login.setHeader(HttpHeaders.REFERER , "http://banjimofang.com/weixin/qrlogin/student");
+        login.setHeader(HttpHeaders.USER_AGENT , "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36 Edg/94.0.992.31");
+        login.setHeader(HttpHeaders.HOST , "banjimofang.com");
+        login.setHeader("Proxy-Connection" , "keep-alive");
+        login.setHeader("Upgrade-Insecure-Requests" , "1");
         login.setHeader("Cookie" , cookie);
+        login.setHeader("DNT" , "1");
         CloseableHttpResponse response = client.execute(login);
-        String loginCookie = response.getFirstHeader("Set-Cookie").toString().substring(11).trim();
+//        String loginCookie = response.getFirstHeader("Set-Cookie").toString().substring(11).trim();
 
-        /*Header[] headers = response.getHeaders("Set-Cookie");
+        Header[] headers = response.getHeaders("Set-Cookie");
         StringBuilder loginCookieBuilder = new StringBuilder();
         for (Header header : headers) {
             loginCookieBuilder.append(header.toString().substring(11).trim().split(";")[0]).append(";");
-        }*/
+        }
         
-        String filePayload = new StringBuilder().append("cookie=").append(loginCookie).toString();
+        String filePayload = "cookie=" + loginCookieBuilder.substring(0, loginCookieBuilder.length()-1);
+
+        try {
+            Integer.parseInt(GetClassId.getClassId(loginCookieBuilder.substring(0, loginCookieBuilder.length()-1)));
+        } catch (Exception e) {
+            return 3;
+        }
+
+        log.info("{} login with cookie:{}" , fileName , filePayload);
 
         File file = new File(PATH + fileName + ".properties");
 

@@ -1,13 +1,13 @@
-package xyz.cambria.fuckbjmfspringbootedtion;
+package xyz.cambria;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class FuckBjmfSpringbootEdtionApplication {
+public class FuckSYLUSpringbootEdtionApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(FuckBjmfSpringbootEdtionApplication.class, args);
+        SpringApplication.run(FuckSYLUSpringbootEdtionApplication.class, args);
     }
 
 }
