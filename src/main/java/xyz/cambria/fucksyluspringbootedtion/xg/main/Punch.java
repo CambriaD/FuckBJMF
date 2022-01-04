@@ -7,6 +7,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import xyz.cambria.common.FilePathUtil;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -33,83 +34,41 @@ public class Punch {
             return;
 
         for (File file : files) {
-            System.out.println(file.getName());
+//            System.out.println(file.getName());
+            log.info("excute with {}" , file.getName());
         }
         Properties properties = new Properties();
 
         for (File file : files) {
+
+            properties.load(new FileReader(file));
+
+//          System.out.println(properties.getProperty("id"));
+            String cookie = XGLogin.login(properties.getProperty("id"), properties.getProperty("pwd"));
+
+            if (cookie == null) {
+                continue;
+            }
             try {
-                properties.load(new FileReader(file));
-
-//                System.out.println(properties.getProperty("id"));
-
-                String cookie = XGLogin.login(properties.getProperty("id"), properties.getProperty("pwd"));
-
-                if (cookie == null) {
-                    continue;
-                }
-
-/*                Temperature.run("0" , null , cookie);
+                Temperature.run("0" , null , cookie);
                 Temperature.run("8" , null , cookie);
                 Temperature.run("16" , null , cookie);
-                log.info("{} upload temperatrue success" , file.getName());*/
+                log.info("{} upload temperatrue success" , file.getName());
 
-                try {
-                    InfoCollect.run(cookie , properties , GetInfoCollectForm.run(cookie));
-                } catch (Exception e) {
-                    System.out.println("没抓到健康状况表单信息,timestamp:" + System.currentTimeMillis());
-                    log.error("get infocollect form failed.");
-                }
             } catch (Exception e) {
                 log.error("{} upload temperatrue Failed." , file.getName());
                 e.printStackTrace();
             }
 
-        }
-    }
-
-    public static void main(String[] args) {
-        String FILE_PATH = FilePathUtil.getTemperaturePath();
-        File[] files = new File(FILE_PATH).listFiles();
-//        System.out.println(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date()));
-//        System.out.println(FILE_PATH + " Found Files:");
-        log.info("Upload Temperature info at {}" , new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date()));
-        log.info("Found Files:");
-        if (files == null)
-            return;
-
-        for (File file : files) {
-            System.out.println(file.getName());
-        }
-        Properties properties = new Properties();
-
-        for (File file : files) {
+            if (properties.getProperty("IDNum") == null) {
+                log.info("no userinfo for infocollect.");
+                continue;
+            }
             try {
-                properties.load(new FileReader(file));
-
-//                System.out.println(properties.getProperty("id"));
-
-                String cookie = XGLogin.login(properties.getProperty("id"), properties.getProperty("pwd"));
-
-                if (cookie == null) {
-                    continue;
-                }
-
-/*                Temperature.run("0" , null , cookie);
-                Temperature.run("8" , null , cookie);
-                Temperature.run("16" , null , cookie);
-                log.info("{} upload temperatrue success" , file.getName());*/
-
-                try {
-                    InfoCollect.run(cookie , properties , GetInfoCollectForm.run(cookie));
-//                    InfoCollect.run(cookie , properties , new ArrayList<>());
-                } catch (Exception e) {
-                    System.out.println("没抓到健康状况表单信息,timestamp:" + System.currentTimeMillis());
-                    log.error("get infocollect form failed.");
-                }
+                InfoCollect.run(cookie , properties , GetInfoCollectForm.run(cookie));
             } catch (Exception e) {
-                log.error("{} upload temperatrue Failed." , file.getName());
-                e.printStackTrace();
+//                    System.out.println("没抓到健康状况表单信息,timestamp:" + System.currentTimeMillis());
+                log.error("{} get infocollect form failed." , file.getName());
             }
 
         }

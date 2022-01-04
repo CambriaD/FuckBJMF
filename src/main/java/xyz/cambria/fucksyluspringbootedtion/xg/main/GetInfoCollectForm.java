@@ -1,6 +1,7 @@
 package xyz.cambria.fucksyluspringbootedtion.xg.main;
 
 import com.alibaba.fastjson.JSON;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
@@ -14,6 +15,7 @@ import java.util.List;
  * @Author Cambria
  * @creat 2021/7/31 18:40
  */
+@Slf4j
 public class GetInfoCollectForm {
 
     private static final String URL = "http://xg.sylu.edu.cn/SPCP/Web/Report/Index";
@@ -39,7 +41,7 @@ public class GetInfoCollectForm {
         int i = 2;
 
         try {
-            for (i = 2; i < 14; i++) {
+            for (i = 2; i < 20; i++) {
                 PZData pzData = new PZData();
                 pzData.setOptionType("0");
                 pzData.setOptionName("否");
@@ -56,7 +58,7 @@ public class GetInfoCollectForm {
 
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.warn("pzdata ended with index {}" , i);
         }
 
         int reSubmiteFlag = page.indexOf("ReSubmiteFlag");

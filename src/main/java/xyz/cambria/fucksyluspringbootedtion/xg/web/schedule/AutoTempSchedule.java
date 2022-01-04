@@ -11,7 +11,7 @@ import java.io.IOException;
 @EnableScheduling
 public class AutoTempSchedule {
 
-    @Scheduled(cron = "0 * * * * 1-7")
+    @Scheduled(cron = "0 5 12 * * 1-7")
 //    @Scheduled(cron = "0/30 * * * * 1-7")
     private void punch() throws IOException {
         Punch.punch(null);
