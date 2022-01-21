@@ -88,11 +88,16 @@ public class InfoCollect {
 
 //        System.out.println(EntityUtils.toString(response.getEntity()));
 
+        if (EntityUtils.toString(response.getEntity()).contains("验证码")) {
+            log.warn("Checocode Error.");
+            return false;
+        }
+
         if (EntityUtils.toString(response.getEntity()).contains("成功")) {
             log.info("{} excute infocollect success" , pps.getProperty("id"));
         }
 
-        return false;
+        return true;
     }
 
 }

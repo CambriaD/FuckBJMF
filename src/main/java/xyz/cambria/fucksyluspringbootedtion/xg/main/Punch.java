@@ -124,7 +124,11 @@ public class Punch {
                 continue;
             }
             try {
-                InfoCollect.run(cookie , properties , GetInfoCollectForm.run(cookie));
+                boolean result = InfoCollect.run(cookie, properties, GetInfoCollectForm.run(cookie));
+                while (!result) {
+                    log.warn("Retrying.");
+                    result = InfoCollect.run(cookie, properties, GetInfoCollectForm.run(cookie));
+                }
                 properties.clear();
             } catch (Exception e) {
 //                    System.out.println("没抓到健康状况表单信息,timestamp:" + System.currentTimeMillis());
