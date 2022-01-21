@@ -70,6 +70,7 @@ public class InfoCollect {
         list.add(new BasicNameValuePair("FaCountyName" , pps.getProperty("Country")));
         list.add(new BasicNameValuePair("checkboxCount" , "0"));
         list.add(new BasicNameValuePair("blackCount" , "4"));
+        list.add(new BasicNameValuePair("VCcode" , FuckCheckCode.getCheckcode(cookie , System.currentTimeMillis())));
         /*list.add(new BasicNameValuePair("PZData" , PZDATA));
         list.add(new BasicNameValuePair("ReSubmiteFlag" , ""));*/
         try {
