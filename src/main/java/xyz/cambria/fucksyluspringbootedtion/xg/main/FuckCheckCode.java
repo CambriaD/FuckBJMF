@@ -7,6 +7,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -58,25 +59,30 @@ public class FuckCheckCode {
         System.out.println(result);
     }*/
 
-    public static String getCheckcode(String cookie , Long timestamp) {
-        CloseableHttpClient client = HttpClients.createDefault();
-
+    public static String getCheckcode(Long timestamp , HttpClientContext context , CloseableHttpClient httpClient) {
         HttpGet getCheckcode = new HttpGet("http://xg.sylu.edu.cn/SPCP/Web/Report/GetLoginVCode?dt=" + timestamp);
-        getCheckcode.setHeader("Cookie" , cookie);
+//        getCheckcode.setHeader("Cookie" , cookie);
+
+//        System.out.println(cookie);
 
         CloseableHttpResponse checkcodeResp = null;
         try {
-            checkcodeResp = client.execute(getCheckcode);
+            checkcodeResp = httpClient.execute(getCheckcode , context);
         } catch (IOException e) {
             log.error("Get Checkcode Failed.");
             return null;
         }
         try {
             byte[] bytes = StreamUtils.copyToByteArray(checkcodeResp.getEntity().getContent());
+/*            FileOutputStream fileOutputStream = new FileOutputStream("test.jpg");
+            fileOutputStream.write(bytes);
+            fileOutputStream.close();*/
             HttpPost ddddocrReq = new HttpPost("http://192.168.1.2:9898/ocr/b64/text");
             ddddocrReq.setEntity(new ByteArrayEntity(Base64.getEncoder().encode(bytes)));
-            CloseableHttpResponse ddddocrResp = client.execute(ddddocrReq);
-            return EntityUtils.toString(ddddocrResp.getEntity());
+            CloseableHttpResponse ddddocrResp = HttpClients.createDefault().execute(ddddocrReq);
+            String checkcode = EntityUtils.toString(ddddocrResp.getEntity());
+//            System.out.println(checkcode);
+            return checkcode;
         } catch (IOException e) {
             log.error("Cast Image Error.");
             return null;

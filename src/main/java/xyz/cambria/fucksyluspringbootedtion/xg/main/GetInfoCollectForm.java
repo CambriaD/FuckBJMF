@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
@@ -20,10 +22,9 @@ public class GetInfoCollectForm {
 
     private static final String URL = "http://xg.sylu.edu.cn/SPCP/Web/Report/Index";
 
-    static List<NameValuePair> run(String cookie) throws Exception {
+    static List<NameValuePair> run(HttpClientContext context , CloseableHttpClient httpClient) throws Exception {
         HttpGet httpGet = new HttpGet(URL);
-        httpGet.setHeader("Cookie",cookie);
-        String page = EntityUtils.toString(HttpClients.createDefault().execute(httpGet).getEntity());
+        String page = EntityUtils.toString(httpClient.execute(httpGet , context).getEntity());
 
         List<NameValuePair> data = new ArrayList<>();
         List<String> pzdata = new ArrayList<>();
