@@ -36,7 +36,7 @@ public class Temperature {
             //NameValuePair接口定义了用作 HTTP 消息元素的名称/值对参数。
             List<NameValuePair> nvps = new ArrayList<NameValuePair>();
             nvps.add(new BasicNameValuePair("TimeNowHour", hour));
-            nvps.add(new BasicNameValuePair("TimeNowMinute", "0"));
+            nvps.add(new BasicNameValuePair("TimeNowMinute", "1"));
             nvps.add(new BasicNameValuePair("Temper1", "36"));
             nvps.add(new BasicNameValuePair("Temper2", "0"));
             nvps.add(new BasicNameValuePair("ReSubmiteFlag", rsf));

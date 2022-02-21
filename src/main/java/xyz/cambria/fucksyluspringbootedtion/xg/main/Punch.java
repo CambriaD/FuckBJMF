@@ -30,11 +30,63 @@ import java.util.Properties;
 @Slf4j
 public class Punch {
 
-    public static void punch(String[] args) throws IOException {
+    public static void punch() throws IOException {
         String FILE_PATH = FilePathUtil.getTemperaturePath();
         File[] files = new File(FILE_PATH).listFiles();
-//        System.out.println(new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date()));
-//        System.out.println(FILE_PATH + " Found Files:");
+        log.info("Upload InfoCollect Form at {}" , new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date()));
+        log.info("Found Files:");
+        if (files == null)
+            return;
+
+        for (File file : files) {
+            log.info("{}" , file.getName());
+        }
+        Properties properties = new Properties();
+
+        for (File file : files) {
+
+            properties.load(new FileReader(file));
+
+            RequestConfig globalConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build();
+            HttpClientContext context = HttpClientContext.create();
+            CookieStore cookieStore = new BasicCookieStore();
+            context.setCookieStore(cookieStore);
+            CloseableHttpClient httpClient = HttpClients.custom().setDefaultRequestConfig(globalConfig)
+                    .setDefaultCookieStore(cookieStore).build();
+
+            String cookie = XGLogin.login(properties.getProperty("id"), properties.getProperty("pwd") , context , httpClient);
+
+            if (cookie == null) {
+                properties.clear();
+                continue;
+            }
+
+            if (properties.getProperty("IDNum") == null) {
+                log.info("no userinfo for infocollect.");
+                properties.clear();
+                continue;
+            }
+            try {
+                boolean result = InfoCollect.run(properties, GetInfoCollectForm.run(context , httpClient) , context , httpClient);
+                log.info("Info Collect {}" , result?"success":"failed");
+                while (!result) {
+                    log.warn("Retrying.");
+                    Thread.sleep(1000L);
+                    result = InfoCollect.run(properties, GetInfoCollectForm.run(context , httpClient) , context , httpClient);
+                }
+                properties.clear();
+            } catch (Exception e) {
+                e.printStackTrace();
+                properties.clear();
+                log.error("{} get infocollect form failed." , file.getName());
+            }
+
+        }
+    }
+
+    public static void temp() throws IOException {
+        String FILE_PATH = FilePathUtil.getTemperaturePath();
+        File[] files = new File(FILE_PATH).listFiles();
         log.info("Upload Temperature info at {}" , new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date()));
         log.info("Found Files:");
         if (files == null)
@@ -57,46 +109,23 @@ public class Punch {
             CloseableHttpClient httpClient = HttpClients.custom().setDefaultRequestConfig(globalConfig)
                     .setDefaultCookieStore(cookieStore).build();
 
-//          System.out.println(properties.getProperty("id"));
             String cookie = XGLogin.login(properties.getProperty("id"), properties.getProperty("pwd") , context , httpClient);
 
             if (cookie == null) {
                 properties.clear();
                 continue;
             }
-            // try {
-            //     Temperature.run("0" , null , cookie);
-            //     Temperature.run("8" , null , cookie);
-            //     Temperature.run("16" , null , cookie);
-            //     log.info("{} upload temperatrue success" , file.getName());
+             try {
+                 Temperature.run("5" , null , cookie);
+                 Temperature.run("5" , null , cookie);
+                 Temperature.run("5" , null , cookie);
+                 log.info("{} upload temperatrue success" , file.getName());
 
-            // } catch (Exception e) {
-            //     log.error("{} upload temperatrue Failed." , file.getName());
-            //     properties.clear();
-            //     e.printStackTrace();
-            // }
-
-            if (properties.getProperty("IDNum") == null) {
-                log.info("no userinfo for infocollect.");
-                properties.clear();
-                continue;
-            }
-            try {
-                boolean result = InfoCollect.run(properties, GetInfoCollectForm.run(context , httpClient) , context , httpClient);
-                log.info("Info Collect {}" , result?"success":"failed");
-                while (!result) {
-                    log.warn("Retrying.");
-                    Thread.sleep(1000L);
-                    result = InfoCollect.run(properties, GetInfoCollectForm.run(context , httpClient) , context , httpClient);
-                }
-                properties.clear();
-            } catch (Exception e) {
-//                    System.out.println("没抓到健康状况表单信息,timestamp:" + System.currentTimeMillis());
-                e.printStackTrace();
-                properties.clear();
-                log.error("{} get infocollect form failed." , file.getName());
-            }
-
+             } catch (Exception e) {
+                 log.error("{} upload temperatrue Failed." , file.getName());
+                 properties.clear();
+                 e.printStackTrace();
+             }
         }
     }
 

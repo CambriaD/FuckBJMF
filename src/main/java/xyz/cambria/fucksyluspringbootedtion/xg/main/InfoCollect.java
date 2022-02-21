@@ -37,13 +37,7 @@ public class InfoCollect {
 /*        list.add(new BasicNameValuePair("Province" , new String(pps.getProperty("IDNum").substring(0,2) + "0000")));
         list.add(new BasicNameValuePair("City" , new String(pps.getProperty("IDNum").substring(0,4) + "00")));
         list.add(new BasicNameValuePair("County" , pps.getProperty("IDNum").substring(0,6)));*/
-        list.add(new BasicNameValuePair("Province" , new String(pps.getProperty("IDNum").substring(0,2) + "0000")));
-        list.add(new BasicNameValuePair("City" , new String(pps.getProperty("IDNum").substring(0,4) + "00")));
-        list.add(new BasicNameValuePair("County" ,new String(pps.getProperty("IDNum").substring(0 , 6))));
         list.add(new BasicNameValuePair("ComeWhere" , pps.getProperty("address")));
-        list.add(new BasicNameValuePair("FaProvince" , new String(pps.getProperty("IDNum").substring(0,2) + "0000")));
-        list.add(new BasicNameValuePair("FaCity" , new String(pps.getProperty("IDNum").substring(0,4) + "00")));
-        list.add(new BasicNameValuePair("FaCounty" , new String(pps.getProperty("IDNum").substring(0 , 6))));
         list.add(new BasicNameValuePair("FaComeWhere" , pps.getProperty("familyaddress")));
         /*list.add(new BasicNameValuePair("radio_1" , "e2f169d0-0778-4e3e-8ebf-64ce5a44f307"));
         list.add(new BasicNameValuePair("radio_2" , "2d520bb1-8632-4d77-b6de-9506df20bdcf"));
@@ -63,12 +57,24 @@ public class InfoCollect {
         list.add(new BasicNameValuePair("Other" , ""));
         list.add(new BasicNameValuePair("GetAreaUrl" , "/SPCP/Web/Report/GetArea"));
         list.add(new BasicNameValuePair("IdCard" , pps.getProperty("IDNum")));
+        if (pps.getProperty("Country").equals("浑南区")) {
+            list.add(new BasicNameValuePair("Province" , "210000"));
+            list.add(new BasicNameValuePair("City" , "210100"));
+            list.add(new BasicNameValuePair("County" ,"210112"));
+        } else {
+            list.add(new BasicNameValuePair("Province" , new String(pps.getProperty("IDNum").substring(0,2) + "0000")));
+            list.add(new BasicNameValuePair("City" , new String(pps.getProperty("IDNum").substring(0,4) + "00")));
+            list.add(new BasicNameValuePair("County" , new String(pps.getProperty("IDNum").substring(0 , 6))));
+        }
+        list.add(new BasicNameValuePair("FaProvince" , new String(pps.getProperty("IDNum").substring(0,2) + "0000")));
+        list.add(new BasicNameValuePair("FaCity" , new String(pps.getProperty("IDNum").substring(0,4) + "00")));
+        list.add(new BasicNameValuePair("FaCounty" , new String(pps.getProperty("IDNum").substring(0 , 6))));
         list.add(new BasicNameValuePair("ProvinceName" , pps.getProperty("Province")));
         list.add(new BasicNameValuePair("CityName" , pps.getProperty("City")));
         list.add(new BasicNameValuePair("CountyName" , pps.getProperty("Country")));
-        list.add(new BasicNameValuePair("FaProvinceName" , pps.getProperty("Province")));
-        list.add(new BasicNameValuePair("FaCityName" , pps.getProperty("City")));
-        list.add(new BasicNameValuePair("FaCountyName" , pps.getProperty("Country")));
+        list.add(new BasicNameValuePair("FaProvinceName" , pps.getProperty("FaProvince")));
+        list.add(new BasicNameValuePair("FaCityName" , pps.getProperty("FaCity")));
+        list.add(new BasicNameValuePair("FaCountyName" , pps.getProperty("FaCountry")));
         list.add(new BasicNameValuePair("checkboxCount" , "0"));
         list.add(new BasicNameValuePair("blackCount" , "4"));
         list.add(new BasicNameValuePair("VCcode" , FuckCheckCode.getCheckcode(System.currentTimeMillis() ,context , httpClient)));
@@ -93,7 +99,6 @@ public class InfoCollect {
 
         if (respEntity.contains("错误")) {
             log.warn("Checocode Error.");
-//            System.out.println(respEntity);
             return false;
         }
 
@@ -107,6 +112,9 @@ public class InfoCollect {
             return true;
         }
 
+        log.warn("Unknown Error");
+        log.debug(respEntity);
+        log.debug(list.toString());
         return false;
     }
 
